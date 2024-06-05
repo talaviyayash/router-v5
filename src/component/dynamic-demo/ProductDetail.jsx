@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { products } from "./ProductsDemoArray";
-
+import Loader from "./Loader";
 const ProductDetail = () => {
   const { id } = useParams();
-  const [productDetail, setProductDetail] = useState();
+  const [productDetail, setProductDetail] = useState(true);
+  const [isLoading, setLoading] = useState();
   useEffect(() => {
-    const data = products.find((val) => val.id === Number(id));
-    setProductDetail(data);
+    setLoading(true);
+    setTimeout(() => {
+      const data = products.find((val) => val.id === Number(id));
+      setProductDetail(data);
+      setLoading(false);
+    }, 2000);
   }, [id]);
   return (
     <>
-      {productDetail && (
+      {isLoading && <Loader />}
+      {productDetail && !isLoading && (
         <>
           <div className="product-show">
             <h1> Selected Product :- </h1>

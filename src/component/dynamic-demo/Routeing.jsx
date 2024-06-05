@@ -1,14 +1,14 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import NavBar from "./Navbar";
-import Home from "./Home";
-import Form from "./Form";
-import Auth from "./AuthLayout";
 import { ContextWrap } from "./Context/Context";
-import Private from "./Private";
-import Product from "./Product";
-import ProductDetail from "./ProductDetail";
-// import { Prompt } from "react-router-dom/cjs/react-router-dom";
+import Loader from "./Loader";
+const NavBar = lazy(() => import("./Navbar"));
+const Home = lazy(() => import("./Home"));
+const Form = lazy(() => import("./Form"));
+const Auth = lazy(() => import("./AuthLayout"));
+const Private = lazy(() => import("./Private"));
+const ProductDetail = lazy(() => import("./ProductDetail"));
+const Product = lazy(() => import("./Product"));
 export const Routeing = () => {
   const routerInArray = [
     {
@@ -29,6 +29,12 @@ export const Routeing = () => {
               props: {
                 header: "Login",
               },
+              children: [
+                {
+                  path: "/login",
+                  Element: Form,
+                },
+              ],
             },
             {
               path: "/register",
@@ -108,9 +114,11 @@ function RenderRoute({ routerInArray }) {
       }
       return (
         <Route {...attribute} path={path} key={index}>
-          <Element {...props}>
-            {children && <RenderRoute routerInArray={children} />}
-          </Element>
+          <Suspense fallback={<Loader />}>
+            <Element {...props}>
+              {children && <RenderRoute routerInArray={children} />}
+            </Element>
+          </Suspense>
         </Route>
       );
     }
